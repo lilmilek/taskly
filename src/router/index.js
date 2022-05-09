@@ -7,7 +7,7 @@ import CollectionsView from '@/views/CollectionsView'
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'homea',
     component: HomeView
   },
   {
