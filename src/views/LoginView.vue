@@ -3,29 +3,28 @@
     <div class="py-10 px-5 w-full flex items-center lg:w-1/2">
       <div class="max-w-md mx-auto space-y-8">
         <div>
-          <h1 class="text-4xl font-bold text-zinc-900">Zaloguj się do <span class="font-extrabold underline">Taskly</span></h1>
-          <p class="text-zinc-500 mt-2">Witaj ponownie! Zaloguj się do swojego konta używając maila i hasła bądź kontynuuj z użyciem google</p>
+          <h1 class="text-4xl font-bold">Zaloguj się do <span class="font-extrabold underline">Taskly</span></h1>
+          <p class="mt-2 opacity-60">Witaj ponownie! Zaloguj się do swojego konta używając maila i hasła bądź kontynuuj z użyciem google</p>
         </div>
         <form class="space-y-4">
-          <input v-model="email" type="email" class="input" placeholder="Email" required>
-          <input v-model="password" type="password" class="input" placeholder="Hasło" required>
-          <button class="p-2.5 h-[46px] rounded-lg bg-emerald-500 text-white w-full font-medium hover:bg-emerald-600 transition" @click.prevent="login">
-            <i v-if="isLoading" class="fa-solid fa-circle-notch animate-spin" />
-            <span v-if="!isLoading">Zaloguj się</span>
-          </button>
+          <input v-model="email" type="email" placeholder="Email" class="input input-bordered w-full">
+          <input v-model="password" type="password" placeholder="Hasło" class="input input-bordered w-full">
+          <button class="btn btn-primary w-full" @click.prevent="login">Zaloguj się</button>
         </form>
-        <p class="text-zinc-500 text-sm text-center">Nie masz konta? <router-link :to="{name: 'register'}" class="text-zinc-900 font-medium">Zarejestruj się</router-link></p>
+        <p class="text-zinc-500 text-sm text-center">Nie masz konta? <router-link :to="{name: 'register'}" class="text-primary hover:text-primary-focus transition font-medium">Zarejestruj się</router-link></p>
       </div>
     </div>
     <OnBoarding />
   </div>
+  <TheNotifications />
 </template>
 
 <script>
 import OnBoarding from '@/components/OnBoarding'
+import TheNotifications from '@/components/TheNotifications'
 export default {
   name: 'LoginView',
-  components: { OnBoarding },
+  components: { TheNotifications, OnBoarding },
   data () {
     return {
       email: '',
@@ -47,6 +46,6 @@ export default {
 
 <style scoped>
 .input {
-  @apply border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-offset-2 focus:ring-2 focus:ring-emerald-300 hover:border-emerald-500 focus:border-emerald-500 block w-full p-3 transition-all;
+  @apply border border-zinc-300 text-zinc-900 focus:ring-blue-500 focus:ring-offset-2 focus:ring-2 focus:ring-emerald-300 hover:border-emerald-500 focus:border-emerald-500 transition-all;
 }
 </style>

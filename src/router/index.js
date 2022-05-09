@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView'
 import RegisterView from '@/views/RegisterView'
 import CollectionsView from '@/views/CollectionsView'
+import CollectionView from '@/views/CollectionView'
 
 const routes = [
   {
@@ -32,6 +33,14 @@ const routes = [
     component: CollectionsView,
     meta: {
       title: 'Kolekcje'
+    }
+  },
+  {
+    path: '/kolekcje/:id',
+    name: 'collection',
+    component: CollectionView,
+    meta: {
+      title: 'Kolekcja'
     }
   }
 ]

@@ -7,15 +7,12 @@
           <p class="text-zinc-500 mt-2">Zarejestruj się używając swojego adresu email oraz hasła</p>
         </div>
         <form class="space-y-4">
-          <input type="text" class="input" placeholder="Imię i nazwisko" v-model="name" required>
-          <input type="email" class="input" placeholder="Email" v-model="email" required>
-          <input type="password" class="input" placeholder="Hasło" v-model="password" required>
-          <button @click.prevent="register" class="p-2.5 h-[46px] rounded-lg bg-emerald-500 text-white w-full font-medium hover:bg-emerald-600 transition">
-            <i class="fa-solid fa-circle-notch animate-spin" v-if="isLoading"></i>
-            <span v-if="!isLoading">Zarejestruj się</span>
-          </button>
+          <input v-model="name" type="text" placeholder="Imię" class="input input-bordered w-full">
+          <input v-model="email" type="email" placeholder="Email" class="input input-bordered w-full">
+          <input v-model="password" type="password" placeholder="Hasło" class="input input-bordered w-full">
+          <button class="btn btn-primary w-full" @click.prevent="register">Zarejestruj się</button>
         </form>
-        <p class="text-zinc-500 text-sm text-center">Masz już konto? <router-link :to="{name: 'login'}" class="text-zinc-900 font-medium">Zaloguj się</router-link></p>
+        <p class="text-zinc-500 text-sm text-center">Masz już konto? <router-link :to="{name: 'login'}" class="font-medium text-primary hover:text-primary-focus transition">Zaloguj się</router-link></p>
       </div>
     </div>
     <OnBoarding />
@@ -56,6 +53,6 @@ export default {
 
 <style scoped>
 .input {
-  @apply border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-blue-500 focus:ring-offset-2 focus:ring-2 focus:ring-emerald-300 hover:border-emerald-500 focus:border-emerald-500 block w-full p-3 transition-all;
+  @apply border border-zinc-300 text-zinc-900 focus:ring-blue-500 focus:ring-offset-2 focus:ring-2 focus:ring-emerald-300 hover:border-emerald-500 focus:border-emerald-500 transition-all;
 }
 </style>
