@@ -11,21 +11,29 @@
     </ul>
     <div class="grid grid-cols-3 gap-4 pt-10">
       <CollectionCard v-for="collection in $store.state.collections" :key="collection.title" :collection="collection" />
-      <div class="flex items-center justify-center h-1/2 border-2 border-base-200 rounded-2xl cursor-pointer hover:bg-base-200 transition-all duration-200">
+      <div @click="toggleCreateCollectionModal" class="flex items-center justify-center h-1/2 border-2 border-base-200 rounded-2xl cursor-pointer hover:bg-base-200 transition-all duration-200">
         <i class="fa-solid fa-plus"></i>
       </div>
     </div>
   </div>
+  <CreateCollectionsModal @close="toggleCreateCollectionModal" :is-show="isCreateCollectionsModal" />
 </template>
 
 <script>
 import CollectionCard from '@/components/CollectionCard'
+import CreateCollectionsModal from '@/components/CreateCollectionsModal'
 export default {
   name: 'CollectionsView',
-  components: { CollectionCard },
+  components: { CreateCollectionsModal, CollectionCard },
   data () {
     return {
-      selectedTab: 2
+      selectedTab: 2,
+      isCreateCollectionsModal: false
+    }
+  },
+  methods: {
+    toggleCreateCollectionModal () {
+      this.isCreateCollectionsModal = !this.isCreateCollectionsModal
     }
   }
 }

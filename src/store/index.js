@@ -56,6 +56,15 @@ export default createStore({
           }
         ]
       }
+    ],
+    colors: [
+      '#EB7FA1',
+      '#D7BE66',
+      '#D8956C',
+      '#C46164',
+      '#A36FDF',
+      '#83C2BE',
+      '#998074'
     ]
   },
   getters: {
