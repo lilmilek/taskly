@@ -31,9 +31,16 @@
         </label>
         <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-200 rounded-box w-52">
           <li>
-            <a>
+            <router-link :to="{name: 'account'}">
               <i class="fa-solid fa-user" />
               Profil
+            </router-link>
+          </li>
+          <li class="disabled">
+            <a class="">
+              <i class="fa-solid fa-user-group"></i>
+              Znajomi
+              <span class="badge ml-auto">Wkrótce</span>
             </a>
           </li>
           <li><a><i class="fa-solid fa-gear" />Ustawienia</a></li>

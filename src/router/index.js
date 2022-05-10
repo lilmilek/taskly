@@ -4,6 +4,7 @@ import LoginView from '@/views/LoginView'
 import RegisterView from '@/views/RegisterView'
 import CollectionsView from '@/views/CollectionsView'
 import CollectionView from '@/views/CollectionView'
+import AccountView from '@/views/AccountView'
 
 const routes = [
   {
@@ -44,6 +45,14 @@ const routes = [
     component: CollectionView,
     meta: {
       title: 'Kolekcja'
+    }
+  },
+  {
+    path: '/konto',
+    name: 'account',
+    component: AccountView,
+    meta: {
+      title: 'Konto'
     }
   }
 ]
