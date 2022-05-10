@@ -1,9 +1,17 @@
 <template>
+  <TheNavbar v-if="isNavbar" />
   <router-view />
 </template>
 
 <script>
+import TheNavbar from '@/components/TheNavbar'
 export default {
+  components: { TheNavbar },
+  computed: {
+    isNavbar () {
+      return !(this.$route.name === 'login' || this.$route.name === 'register')
+    }
+  }
 }
 </script>
 

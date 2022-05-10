@@ -46,6 +46,6 @@ export default {
 
 <style scoped>
 .input {
-  @apply border border-zinc-300 text-zinc-900 focus:ring-blue-500 focus:ring-offset-2 focus:ring-2 focus:ring-emerald-300 hover:border-emerald-500 focus:border-emerald-500 transition-all;
+  @apply border border-zinc-300 focus:ring-offset-base-100 focus:ring-offset-2 focus:ring-2 focus:ring-emerald-300 hover:border-emerald-500 focus:border-emerald-500 transition-all;
 }
 </style>
