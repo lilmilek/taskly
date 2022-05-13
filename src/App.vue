@@ -1,16 +1,35 @@
 <template>
   <TheNavbar v-if="isNavbar" />
   <router-view />
+  <TheNotifications />
 </template>
 
 <script>
 import TheNavbar from '@/components/TheNavbar'
+import TheNotifications from '@/components/TheNotifications'
+import { auth } from '@/firebase/appInit'
+import { onAuthStateChanged } from 'firebase/auth'
 export default {
-  components: { TheNavbar },
+  components: { TheNotifications, TheNavbar },
   computed: {
     isNavbar () {
       return !(this.$route.name === 'login' || this.$route.name === 'register')
     }
+  },
+  mounted () {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.$store.commit('setUser', user)
+      }
+    })
+  },
+  created () {
+    window.addEventListener('offline', () => {
+      this.$store.commit('addNotification', { nState: 'warning', text: 'Utracono połączenie z internetem' })
+    })
+    window.addEventListener('online', () => {
+      this.$store.commit('addNotification', { nState: 'success', text: 'Nawiązano połączenie z internetem' })
+    })
   }
 }
 </script>
