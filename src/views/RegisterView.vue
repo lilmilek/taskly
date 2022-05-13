@@ -28,23 +28,26 @@
               <span class="label-text ml-2">Akceptuje <span class="font-medium">Regulamin</span> oraz <span class="font-medium">Politykę Prywatności</span></span>
             </label>
           </div>
-          <button class="btn btn-primary w-full" @click.prevent="register">Zarejestruj się</button>
+          <button class="btn btn-primary w-full" :class="{loading: isLoading}" @click.prevent="validate">
+            <span v-if="!isLoading">Zarejestruj się</span>
+          </button>
         </form>
         <p class="text-zinc-500 text-sm text-center">Masz już konto? <router-link :to="{name: 'login'}" class="font-medium text-primary hover:text-primary-focus transition">Zaloguj się</router-link></p>
       </div>
     </div>
     <OnBoarding />
   </div>
-  <TheNotifications />
 </template>
 
 <script>
 import OnBoarding from '@/components/OnBoarding'
-import TheNotifications from '@/components/TheNotifications'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { auth, storage } from '@/firebase/appInit'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 export default {
   name: 'RegisterView',
-  components: { TheNotifications, OnBoarding },
+  components: { OnBoarding },
   data () {
     return {
       email: '',
@@ -53,15 +56,25 @@ export default {
       isLoading: false,
       image: null,
       imgUrl: '',
-      terms: false
+      terms: false,
+      dbImageUrl: null
+    }
+  },
+  computed: {
+    sendDbImageUrl () {
+      if (this.dbImageUrl) {
+        return this.dbImageUrl
+      } else {
+        return 'https://firebasestorage.googleapis.com/v0/b/taskly-ab50a.appspot.com/o/profileImages%2FPortrait_Placeholder.png?alt=media&token=1dd284e3-c3ee-4057-9323-3f591fb0fdda'
+      }
     }
   },
   methods: {
-    register () {
+    validate () {
       if (this.email && this.password && this.name) {
         if (this.name.split(' ').length >= 2) {
           if (this.terms) {
-            console.log('git')
+            this.register()
           } else {
             this.$store.commit('addNotification', { nState: 'danger', text: 'Musisz zaakceptować nasz regulamin oraz Polityke Prywatności' })
           }
@@ -71,6 +84,36 @@ export default {
       } else {
         this.$store.commit('addNotification', { nState: 'danger', text: 'Wszystkie pola są wymagane' })
       }
+    },
+    register () {
+      this.isLoading = true
+      createUserWithEmailAndPassword(auth, this.email, this.password)
+        .then(async () => {
+          if (this.image) {
+            await this.updateImage()
+          }
+          await updateProfile(auth.currentUser, {
+            displayName: this.name,
+            photoURL: this.sendDbImageUrl
+          })
+          this.isLoading = false
+          await this.$router.push({ name: 'home' })
+        })
+        .catch((error) => {
+          this.isLoading = false
+          console.log(error)
+          if (error.code === 'auth/weak-password') {
+            this.$store.commit('addNotification', { nState: 'danger', text: 'Hasło musi zawierać co najmniej 6 znaków' })
+          }
+          if (error.code === 'auth/invalid-email') {
+            this.$store.commit('addNotification', { nState: 'danger', text: 'Wprowadź poprawny adres Email' })
+          }
+        })
+    },
+    async updateImage () {
+      const profileImagesRef = ref(storage, `profileImages/${auth.currentUser.uid}.jpg`)
+      await uploadBytes(profileImagesRef, this.image)
+      this.dbImageUrl = await getDownloadURL(ref(storage, profileImagesRef))
     },
     imageChange () {
       this.image = this.$refs.imageInput.files[0]

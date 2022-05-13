@@ -26,7 +26,7 @@
       <div class="dropdown dropdown-end">
         <label tabindex="0" class="btn btn-ghost btn-circle avatar">
           <div class="w-10 rounded-full">
-            <img src="https://api.lorem.space/image/face?hash=33791" alt="">
+            <img :src="$store.state.userPhotoUrl" alt="">
           </div>
         </label>
         <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-200 rounded-box w-52">
@@ -38,13 +38,13 @@
           </li>
           <li class="disabled">
             <a class="">
-              <i class="fa-solid fa-user-group"></i>
+              <i class="fa-solid fa-user-group" />
               Znajomi
               <span class="badge ml-auto">Wkrótce</span>
             </a>
           </li>
           <li><a><i class="fa-solid fa-gear" />Ustawienia</a></li>
-          <li><a><i class="fa-solid fa-arrow-right-from-bracket" />Wyloguj się</a></li>
+          <li @click="signOut"><a><i class="fa-solid fa-arrow-right-from-bracket" />Wyloguj się</a></li>
         </ul>
       </div>
     </div>
@@ -52,8 +52,17 @@
 </template>
 
 <script>
+import { signOut } from 'firebase/auth'
+import { auth } from '@/firebase/appInit'
 export default {
-  name: 'TheNavbar'
+  name: 'TheNavbar',
+  methods: {
+    signOut () {
+      signOut(auth).then(() => {
+        this.$router.push({ name: 'login' })
+      })
+    }
+  }
 }
 </script>
 

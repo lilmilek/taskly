@@ -10,30 +10,46 @@
       </li>
     </ul>
     <div class="grid grid-cols-3 gap-4 pt-10">
-      <CollectionCard v-for="collection in $store.state.collections" :key="collection.title" :collection="collection" />
-      <div @click="toggleCreateCollectionModal" class="flex items-center justify-center h-1/2 border-2 border-base-200 rounded-2xl cursor-pointer hover:bg-base-200 transition-all duration-200">
-        <i class="fa-solid fa-plus"></i>
+      <CollectionCard v-for="collection in collections" :key="collection.id" :id="collection.id" :collection="collection.data()" />
+      <div class="flex items-center justify-center h-20 border-2 border-base-200 rounded-2xl cursor-pointer hover:bg-base-200 transition-all duration-200" @click="toggleCreateCollectionModal">
+        <i class="fa-solid fa-plus" />
       </div>
     </div>
   </div>
-  <CreateCollectionsModal @close="toggleCreateCollectionModal" :is-show="isCreateCollectionsModal" />
+  <CreateCollectionsModal :is-show="isCreateCollectionsModal" @close="toggleCreateCollectionModal" />
 </template>
 
 <script>
 import CollectionCard from '@/components/CollectionCard'
 import CreateCollectionsModal from '@/components/CreateCollectionsModal'
+import { collection, query, where, onSnapshot } from 'firebase/firestore'
+import { db } from '@/firebase/appInit'
 export default {
   name: 'CollectionsView',
   components: { CreateCollectionsModal, CollectionCard },
   data () {
     return {
       selectedTab: 2,
-      isCreateCollectionsModal: false
+      isCreateCollectionsModal: false,
+      collections: null
     }
+  },
+  mounted () {
+    this.getCollections()
   },
   methods: {
     toggleCreateCollectionModal () {
       this.isCreateCollectionsModal = !this.isCreateCollectionsModal
+    },
+    getCollections () {
+      const q = query(collection(db, 'collections'), where('owner', '==', this.$store.state.userUid))
+      onSnapshot(q, (querySnapshot) => {
+        const collections = []
+        querySnapshot.forEach((doc) => {
+          collections.push(doc)
+        })
+        this.collections = collections
+      })
     }
   }
 }

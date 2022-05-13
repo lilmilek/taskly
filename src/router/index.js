@@ -5,6 +5,7 @@ import RegisterView from '@/views/RegisterView'
 import CollectionsView from '@/views/CollectionsView'
 import CollectionView from '@/views/CollectionView'
 import AccountView from '@/views/AccountView'
+import { auth } from '@/firebase/appInit'
 
 const routes = [
   {
@@ -12,7 +13,8 @@ const routes = [
     name: 'home',
     component: HomeView,
     meta: {
-      title: 'Strona główna'
+      title: 'Strona główna',
+      requiresAuth: true
     }
   },
   {
@@ -36,7 +38,8 @@ const routes = [
     name: 'collections',
     component: CollectionsView,
     meta: {
-      title: 'Kolekcje'
+      title: 'Kolekcje',
+      requiresAuth: true
     }
   },
   {
@@ -44,7 +47,8 @@ const routes = [
     name: 'collection',
     component: CollectionView,
     meta: {
-      title: 'Kolekcja'
+      title: 'Kolekcja',
+      requiresAuth: true
     }
   },
   {
@@ -52,7 +56,8 @@ const routes = [
     name: 'account',
     component: AccountView,
     meta: {
-      title: 'Konto'
+      title: 'Konto',
+      requiresAuth: true
     }
   }
 ]
@@ -65,6 +70,17 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   document.title = `${to.meta.title} | Taskly`
   next()
+})
+
+router.beforeEach(async (to, from, next) => {
+  const user = auth.currentUser
+  if (to.matched.some((res) => res.meta.requiresAuth)) {
+    if (user) {
+      return next()
+    }
+    return next({ name: 'login' })
+  }
+  return next()
 })
 
 export default router

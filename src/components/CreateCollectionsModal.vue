@@ -6,7 +6,7 @@
         <label class="label">
           <span class="label-text">Nazwa kolekcji</span>
         </label>
-        <input type="text" placeholder="Moja kolekcja" class="input input-bordered w-full">
+        <input v-model="title" type="text" placeholder="Moja kolekcja" class="input input-bordered w-full">
       </div>
       <div class="mt-2">
         <label class="label">
@@ -15,13 +15,13 @@
         <div class="flex flex-wrap gap-2">
           <div v-for="(color, index) in $store.state.colors" :key="index" class="w-10 h-10 rounded-lg cursor-pointer flex items-center justify-center" :style="{'background-color': color}" @click="selectedColor = index">
             <transition name="notification">
-              <i v-if="selectedColor === index" class="fa-solid fa-check" />
+              <i v-if="selectedColor === index" class="fa-solid fa-check text-white" />
             </transition>
           </div>
         </div>
       </div>
       <div class="modal-action mt-10">
-        <div class="btn btn-primary">Utwórz</div>
+        <div class="btn btn-primary" :class="{loading: isLoading}" @click.prevent="createCollection"><span>Utwórz</span></div>
         <div class="btn btn-outline btn-success" @click="$emit('close')">Anuluj</div>
       </div>
     </div>
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { addDoc, collection } from 'firebase/firestore'
+import { db } from '@/firebase/appInit'
 export default {
   name: 'CreateCollectionsModal',
   props: {
@@ -36,7 +38,28 @@ export default {
   },
   data () {
     return {
-      selectedColor: 0
+      selectedColor: 0,
+      title: '',
+      isLoading: false
+    }
+  },
+  methods: {
+    async createCollection () {
+      if (this.title) {
+        this.isLoading = true
+        await addDoc(collection(db, 'collections'), {
+          title: this.title,
+          color: this.$store.state.colors[this.selectedColor],
+          owner: this.$store.state.userUid
+        })
+        this.isLoading = false
+        this.$emit('close')
+      } else {
+        this.$store.commit('addNotification', {
+          nState: 'danger',
+          text: 'Wprowadź tytuł kolekcji'
+        })
+      }
     }
   }
 }

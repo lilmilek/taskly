@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute right-10 bottom-10 space-y-3">
+  <div class="absolute right-10 bottom-10 space-y-3 notifi-container">
     <transition-group name="notification">
       <div class="toast" role="alert" v-if="notification">
         <div class="toast-icon text-green-500 bg-green-100" v-if="notification.state === 'success'">
@@ -58,5 +58,8 @@ export default {
   .toast-close {
     @apply ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8;
   }
+}
+.notifi-container {
+  z-index: 9999999;
 }
 </style>

@@ -65,7 +65,12 @@ export default createStore({
       '#A36FDF',
       '#83C2BE',
       '#998074'
-    ]
+    ],
+    userEmail: null,
+    userUid: null,
+    userEmailVerified: null,
+    userPhotoUrl: null,
+    userName: null
   },
   getters: {
   },
@@ -85,6 +90,16 @@ export default createStore({
     },
     clearNotification (state) {
       state.notification = null
+    },
+    setUser (state, payload) {
+      state.userEmail = payload.email
+      state.userEmailVerified = payload.emailVerified
+      state.userUid = payload.uid
+      state.userPhotoUrl = payload.photoURL
+      state.userName = payload.displayName
+    },
+    setUserName (state, payload) {
+      state.userName = payload
     }
   },
   actions: {
