@@ -35,14 +35,13 @@
               Profil
             </router-link>
           </li>
-          <li class="disabled">
-            <a class="">
+          <li class="">
+            <router-link :to="{name: 'friends'}" class="">
               <i class="fa-solid fa-user-group" />
               Znajomi
-              <span class="badge ml-auto">Wkrótce</span>
-            </a>
+            </router-link>
           </li>
-          <li><a><i class="fa-solid fa-gear" />Ustawienia</a></li>
+          <li class="disabled"><a><i class="fa-solid fa-gear" />Ustawienia<span class="badge ml-auto">Wkrótce</span></a></li>
           <li @click="signOut"><a><i class="fa-solid fa-arrow-right-from-bracket" />Wyloguj się</a></li>
         </ul>
       </div>
