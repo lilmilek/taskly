@@ -1,7 +1,7 @@
 <template>
   <router-link :to="{name: 'collection', params: {id: id}}" class="bg-base-200 rounded-2xl p-6 hover:bg-base-300 transition-all cursor-pointer">
-    <div class="w-10 flex items-center justify-center aspect-square rounded-xl" :style="{'background-color': collection.color}">
-      <i class="fa-solid fa-check text-white text-xl" />
+    <div class="w-10 flex items-center justify-center aspect-square rounded-xl bg-white/10">
+      <p v-html="collection.emoji" class="text-2xl"></p>
     </div>
     <h1 class="text-xl font-medium mt-7">{{ collection.title }}</h1>
 <!--    <div class="flex justify-between items-center mt-1">-->

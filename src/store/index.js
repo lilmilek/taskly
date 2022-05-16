@@ -70,7 +70,27 @@ export default createStore({
     userUid: null,
     userEmailVerified: null,
     userPhotoUrl: null,
-    userName: null
+    userName: null,
+    emojis: [
+      '&#129409',
+      '&#8987',
+      '&#127757',
+      '&#127749',
+      '&#127795',
+      '&#127890',
+      '&#127968',
+      '&#128100',
+      '&#128138',
+      '&#128158',
+      '&#128179',
+      '&#128241',
+      '&#128421',
+      '&#128467',
+      '&#128515',
+      '&#128649',
+      '&#128717',
+      '&#129301'
+    ]
   },
   getters: {
   },

@@ -5,16 +5,16 @@
         <div class="flex items-center justify-center w-10 h-10 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition" @click="$router.go(-1)">
           <i class="fa-solid fa-chevron-left" />
         </div>
-        <h1 class="text-2xl font-bold ml-3">Kolekcja</h1>
+        <h1 class="text-2xl font-bold ml-5"><span v-if="collectionEmoji" class="mr-1" v-html="collectionEmoji" /> {{ collectionTitle }}</h1>
       </div>
       <div class="dropdown dropdown-end">
         <label tabindex="0" class="w-10 h-10 rounded-lg flex items-center justify-center">
           <i class="fa-solid fa-ellipsis text-lg opacity-50 hover:opacity-100 cursor-pointer transition" />
         </label>
         <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52 text-sm">
-          <li>
+          <li @click="makeAsFavourite">
             <a>
-              <i class="fa-regular fa-heart" />
+              <i class="fa-regular fa-heart" :class="{'fa-solid': isFavourite}" />
               Ulubiona
             </a>
           </li>
@@ -24,7 +24,7 @@
               Edytuj
             </a>
           </li>
-          <li>
+          <li @click="isDeleteModalActive = !isDeleteModalActive">
             <a class="text-error active:bg-error active:text-error-content">
               <i class="fa-regular fa-trash-can" />
               Usuń
@@ -35,7 +35,7 @@
     </div>
     <div class="form-control mt-10">
       <div class="input-group">
-        <input v-model="title" type="text" placeholder="Nazwa zadania..." class="input input-bordered w-full" @keyup.enter="addTodo">
+        <input v-model="todoTitle" type="text" placeholder="Nazwa zadania..." class="input input-bordered w-full" @keyup.enter="addTodo">
         <button class="btn btn-primary btn-square" @click="addTodo">
           <i class="fa-solid fa-plus" />
         </button>
@@ -45,23 +45,34 @@
       <p class="font-medium">Zadania <span v-if="todos">- {{ todos.length }}</span></p>
       <div class="mt-5 space-y-3">
         <TransitionGroup name="list">
-          <TaskItem v-for="todo in todos" :key="todo.id" :id="todo.id" :collection-id="$route.params.id" :title="todo.data().title" />
+          <TaskItem v-for="todo in todos" :id="todo.id" :key="todo.id" :collection-id="$route.params.id" :title="todo.data().title" />
         </TransitionGroup>
       </div>
     </div>
-    <div class="mt-10">
+    <div class="mt-10" v-if="doneTodos.length">
       <p class="font-medium">Ukończone <span v-if="doneTodos">- {{ doneTodos.length }}</span></p>
       <div class="mt-5 space-y-3">
         <TransitionGroup name="list">
-          <TaskItem v-for="todo in doneTodos" is-done :key="todo.id" :id="todo.id" :collection-id="$route.params.id" :title="todo.data().title" />
+          <TaskItem v-for="todo in doneTodos" :id="todo.id" :key="todo.id" is-done :collection-id="$route.params.id" :title="todo.data().title" />
         </TransitionGroup>
+      </div>
+    </div>
+  </div>
+  <div class="modal" :class="{'modal-open': isDeleteModalActive}">
+    <div class="modal-box flex flex-col text-center">
+      <i class="fa-solid fa-triangle-exclamation text-base-content/20 dark:text-base-300/30 text-8xl" />
+      <h1 class="font-bold text-2xl mt-4">Na pewno chcesz usunąć tą kolekcje?</h1>
+      <p class="pt-1 text-base-300/400">Tej operacji nie można cofnąć.</p>
+      <div class="modal-action">
+        <div class="btn btn-error" @click="deleteCollection">Tak, usuń</div>
+        <button class="btn" @click="isDeleteModalActive = !isDeleteModalActive">Anuluj</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { collection, addDoc, query, where, onSnapshot } from 'firebase/firestore'
+import { collection, addDoc, query, where, onSnapshot, doc, deleteDoc, getDoc, updateDoc } from 'firebase/firestore'
 import TaskItem from '@/components/TaskItem'
 import { db } from '@/firebase/appInit'
 export default {
@@ -69,23 +80,27 @@ export default {
   components: { TaskItem },
   data () {
     return {
-      title: '',
+      todoTitle: '',
       todos: null,
-      doneTodos: null
+      doneTodos: [],
+      collectionEmoji: '',
+      collectionTitle: '',
+      isDeleteModalActive: false,
+      isFavourite: null
     }
   },
   mounted () {
     this.getTodo()
     this.getDoneTodo()
+    this.getCollectionInfo()
   },
   methods: {
     async addTodo () {
       await addDoc(collection(db, 'collections', this.$route.params.id, 'todo'), {
-        title: this.title,
+        title: this.todoTitle,
         isDone: false
       })
-      this.title = ''
-      console.log('asd')
+      this.todoTitle = ''
     },
     getTodo () {
       const q = query(collection(db, 'collections', this.$route.params.id, 'todo'), where('isDone', '==', false))
@@ -106,6 +121,27 @@ export default {
         })
         this.doneTodos = todos
       })
+    },
+    async getCollectionInfo () {
+      const docSnap = await getDoc(doc(db, 'collections', this.$route.params.id))
+      const result = docSnap.data()
+      this.collectionEmoji = result.emoji
+      this.collectionTitle = result.title
+    },
+    deleteCollection () {
+      deleteDoc(doc(db, 'collections', this.$route.params.id))
+      this.$router.push({ name: 'collections' })
+    },
+    async makeAsFavourite () {
+      await updateDoc(doc(db, 'collections', this.$route.params.id), {
+        isFavourite: !this.isFavourite
+      })
+      if (!this.isFavourite) {
+        this.$store.commit('addNotification', { nState: 'success', text: 'Dodano do ulubionych' })
+      } else {
+        this.$store.commit('addNotification', { nState: 'warning', text: 'Usunięto z ulubionych' })
+      }
+      this.isFavourite = !this.isFavourite
     }
   }
 }

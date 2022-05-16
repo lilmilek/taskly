@@ -10,8 +10,13 @@
       </li>
     </ul>
     <div class="grid grid-cols-3 gap-4 pt-10">
-      <CollectionCard v-for="collection in collections" :key="collection.id" :id="collection.id" :collection="collection.data()" />
-      <div class="flex items-center justify-center h-20 border-2 border-base-200 rounded-2xl cursor-pointer hover:bg-base-200 transition-all duration-200" @click="toggleCreateCollectionModal">
+      <CollectionCard v-for="collection in collections" :key="collection.id" :id="collection.id" :collection="collection" />
+      <div v-if="!collections.length" class="flex flex-col text-center p-6 col-span-3 items-center justify-center border-2 border-base-200 rounded-2xl cursor-pointer hover:bg-base-200 transition-all duration-200" @click="toggleCreateCollectionModal">
+        <i class="fa-solid fa-plus text-3xl text-base-content/20" />
+        <h1 class="text-lg font-semibold mt-3">Nie masz jeszcze żadnych kolekcji</h1>
+        <p class="text-base-content/60 mt-1">Utwórz jedną</p>
+      </div>
+      <div v-if="collections.length" class="flex items-center justify-center h-20 border-2 border-base-200 rounded-2xl cursor-pointer hover:bg-base-200 transition-all duration-200" @click="toggleCreateCollectionModal">
         <i class="fa-solid fa-plus" />
       </div>
     </div>
@@ -22,7 +27,7 @@
 <script>
 import CollectionCard from '@/components/CollectionCard'
 import CreateCollectionsModal from '@/components/CreateCollectionsModal'
-import { collection, query, where, onSnapshot } from 'firebase/firestore'
+import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore'
 import { db } from '@/firebase/appInit'
 export default {
   name: 'CollectionsView',
@@ -31,10 +36,11 @@ export default {
     return {
       selectedTab: 2,
       isCreateCollectionsModal: false,
-      collections: null
+      collections: [],
+      isCollectionLoading: true
     }
   },
-  mounted () {
+  created () {
     this.getCollections()
   },
   methods: {
@@ -42,11 +48,18 @@ export default {
       this.isCreateCollectionsModal = !this.isCreateCollectionsModal
     },
     getCollections () {
-      const q = query(collection(db, 'collections'), where('owner', '==', this.$store.state.userUid))
+      console.log('pobieram')
+      const q = query(collection(db, 'collections'), where('owner', '==', this.$store.state.userUid), orderBy('createdAt', 'desc'))
       onSnapshot(q, (querySnapshot) => {
         const collections = []
-        querySnapshot.forEach((doc) => {
-          collections.push(doc)
+        querySnapshot.forEach(async (doc) => {
+          // const querySnapshot = await getDocs(collection(db, 'collections', doc.id, 'todo'))
+          collections.push({
+            id: doc.id,
+            title: doc.data().title,
+            emoji: doc.data().emoji
+            // size: querySnapshot.size
+          })
         })
         this.collections = collections
       })
