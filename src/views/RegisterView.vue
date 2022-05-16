@@ -42,7 +42,8 @@
 <script>
 import OnBoarding from '@/components/OnBoarding'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
-import { auth, storage } from '@/firebase/appInit'
+import { setDoc, doc } from 'firebase/firestore'
+import { auth, db, storage } from '@/firebase/appInit'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 export default {
@@ -96,6 +97,12 @@ export default {
             displayName: this.name,
             photoURL: this.sendDbImageUrl
           })
+          await setDoc(doc(db, 'users', auth.currentUser.uid), {
+            email: this.email,
+            displayName: this.name,
+            photoUrl: this.sendDbImageUrl
+          })
+          this.$store.commit('setUser', auth.currentUser)
           this.isLoading = false
           await this.$router.push({ name: 'home' })
         })
