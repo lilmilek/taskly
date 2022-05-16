@@ -37,7 +37,8 @@ export default createStore({
       '&#128515',
       '&#128649',
       '&#128717',
-      '&#129301'
+      '&#129301',
+      '✌', '😂', '😝', '😁', '😱', '👉', '🙌', '🍻', '🔥', '🌈', '☀', '🎈', '🌹', '💄', '🎀', '⚽', '🎾', '🏁', '😡', '👿', '🐻', '🐶', '🐬'
     ],
     collections: []
   },
@@ -76,14 +77,14 @@ export default createStore({
   },
   actions: {
     getCollections ({ commit, state }) {
-      console.log('pobralema')
       onSnapshot(query(collection(db, 'collections'), where('owner', '==', state.userUid), orderBy('createdAt', 'desc')), (querySnapshot) => {
         const collections = []
         querySnapshot.forEach(async (doc) => {
           collections.push({
             id: doc.id,
             title: doc.data().title,
-            emoji: doc.data().emoji
+            emoji: doc.data().emoji,
+            isFavourite: doc.data().isFavourite
           })
         })
         commit('setCollections', collections)
