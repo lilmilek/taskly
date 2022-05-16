@@ -86,21 +86,27 @@ export default {
       collectionEmoji: '',
       collectionTitle: '',
       isDeleteModalActive: false,
-      isFavourite: null
+      isFavourite: null,
+      collectionOwner: null
     }
   },
-  mounted () {
+  async mounted () {
+    await this.getCollectionInfo()
+    await this.checkOwner()
     this.getTodo()
     this.getDoneTodo()
-    this.getCollectionInfo()
   },
   methods: {
     async addTodo () {
-      await addDoc(collection(db, 'collections', this.$route.params.id, 'todo'), {
-        title: this.todoTitle,
-        isDone: false
-      })
-      this.todoTitle = ''
+      if (this.todoTitle) {
+        await addDoc(collection(db, 'collections', this.$route.params.id, 'todo'), {
+          title: this.todoTitle,
+          isDone: false
+        })
+        this.todoTitle = ''
+      } else {
+        this.$store.commit('addNotification', { nState: 'warning', text: 'Musisz podać nazwę zadania' })
+      }
     },
     getTodo () {
       const q = query(collection(db, 'collections', this.$route.params.id, 'todo'), where('isDone', '==', false))
@@ -127,6 +133,7 @@ export default {
       const result = docSnap.data()
       this.collectionEmoji = result.emoji
       this.collectionTitle = result.title
+      this.collectionOwner = result.owner
     },
     deleteCollection () {
       deleteDoc(doc(db, 'collections', this.$route.params.id))
@@ -142,6 +149,11 @@ export default {
         this.$store.commit('addNotification', { nState: 'warning', text: 'Usunięto z ulubionych' })
       }
       this.isFavourite = !this.isFavourite
+    },
+    checkOwner () {
+      if (this.collectionOwner !== this.$store.state.userUid) {
+        this.$router.push({ name: 'collections' })
+      }
     }
   }
 }
