@@ -8,25 +8,13 @@
         </label>
         <input v-model="title" type="text" placeholder="Moja kolekcja" class="input input-bordered w-full">
       </div>
-<!--      <div class="mt-2">-->
-<!--        <label class="label">-->
-<!--          <span class="label-text">Kolor</span>-->
-<!--        </label>-->
-<!--        <div class="flex flex-wrap gap-2">-->
-<!--          <div v-for="(color, index) in $store.state.colors" :key="index" class="w-10 h-10 rounded-lg cursor-pointer flex items-center justify-center" :style="{'background-color': color}" @click="selectedColor = index">-->
-<!--            <transition name="notification">-->
-<!--              <i v-if="selectedColor === index" class="fa-solid fa-check text-white" />-->
-<!--            </transition>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
       <div class="mt-2">
         <label class="label">
           <span class="label-text">Ikona</span>
         </label>
         <div class="flex flex-wrap gap-2">
           <div v-for="(emoji, index) in $store.state.emojis" :key="index" class="w-10 h-10 rounded-lg cursor-pointer flex items-center justify-center" :class="{'bg-white/20': selectedEmoji === index}" @click="selectedEmoji = index">
-            <p v-html="emoji" class="text-3xl" />
+            <p class="text-3xl" v-html="emoji" />
           </div>
         </div>
       </div>
@@ -48,7 +36,6 @@ export default {
   },
   data () {
     return {
-      selectedColor: 0,
       selectedEmoji: 0,
       title: '',
       isLoading: false
@@ -60,7 +47,6 @@ export default {
         this.isLoading = true
         await addDoc(collection(db, 'collections'), {
           title: this.title,
-          // color: this.$store.state.colors[this.selectedColor],
           emoji: this.$store.state.emojis[this.selectedEmoji],
           owner: this.$store.state.userUid,
           createdAt: serverTimestamp()
