@@ -1,62 +1,10 @@
 import { createStore } from 'vuex'
+import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore'
+import { db } from '@/firebase/appInit'
 
 export default createStore({
   state: {
     notification: null,
-    collections: [
-      {
-        title: 'Kolekcja',
-        color: '#6FC4BE',
-        todos: [
-          {
-            id: 1,
-            title: 'delectus aut autem',
-            completed: false
-          },
-          {
-            id: 2,
-            title: 'quis ut nam facilis et officia qui',
-            completed: false
-          },
-          {
-            id: 3,
-            title: 'fugiat veniam minus',
-            completed: false
-          },
-          {
-            id: 4,
-            title: 'et porro tempora',
-            completed: true
-          },
-          {
-            id: 4,
-            title: 'et porro tempora',
-            completed: true
-          },
-          {
-            id: 4,
-            title: 'et porro tempora',
-            completed: true
-          }
-        ]
-      },
-      {
-        title: 'Szkoła',
-        color: '#FD77A1',
-        todos: [
-          {
-            id: 1,
-            title: 'delectus aut autem',
-            completed: false
-          },
-          {
-            id: 2,
-            title: 'quis ut nam facilis et officia qui',
-            completed: false
-          }
-        ]
-      }
-    ],
     colors: [
       '#EB7FA1',
       '#D7BE66',
@@ -90,7 +38,8 @@ export default createStore({
       '&#128649',
       '&#128717',
       '&#129301'
-    ]
+    ],
+    collections: []
   },
   getters: {
   },
@@ -120,9 +69,26 @@ export default createStore({
     },
     setUserName (state, payload) {
       state.userName = payload
+    },
+    setCollections (state, payload) {
+      state.collections = payload
     }
   },
   actions: {
+    getCollections ({ commit, state }) {
+      console.log('pobralema')
+      onSnapshot(query(collection(db, 'collections'), where('owner', '==', state.userUid), orderBy('createdAt', 'desc')), (querySnapshot) => {
+        const collections = []
+        querySnapshot.forEach(async (doc) => {
+          collections.push({
+            id: doc.id,
+            title: doc.data().title,
+            emoji: doc.data().emoji
+          })
+        })
+        commit('setCollections', collections)
+      })
+    }
   },
   modules: {
   }

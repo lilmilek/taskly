@@ -9,7 +9,7 @@
         <a href="#" class="card-btn" :class="{active: selectedTab === 2}" @click="selectedTab = 2">Wszystkie</a>
       </li>
     </ul>
-    <div class="grid grid-cols-3 gap-4 pt-10">
+    <div class="grid xs:grid-cols-2 sm:grid-cols-3 gap-4 pt-10">
       <CollectionCard v-for="collection in collections" :key="collection.id" :id="collection.id" :collection="collection" />
       <div v-if="!collections.length" class="flex flex-col text-center p-6 col-span-3 items-center justify-center border-2 border-base-200 rounded-2xl cursor-pointer hover:bg-base-200 transition-all duration-200" @click="toggleCreateCollectionModal">
         <i class="fa-solid fa-plus text-3xl text-base-content/20" />
@@ -27,8 +27,8 @@
 <script>
 import CollectionCard from '@/components/CollectionCard'
 import CreateCollectionsModal from '@/components/CreateCollectionsModal'
-import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore'
-import { db } from '@/firebase/appInit'
+// import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore'
+// import { db } from '@/firebase/appInit'
 export default {
   name: 'CollectionsView',
   components: { CreateCollectionsModal, CollectionCard },
@@ -36,33 +36,18 @@ export default {
     return {
       selectedTab: 2,
       isCreateCollectionsModal: false,
-      collections: [],
+      // collections: [],
       isCollectionLoading: true
     }
   },
-  created () {
-    this.getCollections()
+  computed: {
+    collections () {
+      return this.$store.state.collections
+    }
   },
   methods: {
     toggleCreateCollectionModal () {
       this.isCreateCollectionsModal = !this.isCreateCollectionsModal
-    },
-    getCollections () {
-      console.log('pobieram')
-      const q = query(collection(db, 'collections'), where('owner', '==', this.$store.state.userUid), orderBy('createdAt', 'desc'))
-      onSnapshot(q, (querySnapshot) => {
-        const collections = []
-        querySnapshot.forEach(async (doc) => {
-          // const querySnapshot = await getDocs(collection(db, 'collections', doc.id, 'todo'))
-          collections.push({
-            id: doc.id,
-            title: doc.data().title,
-            emoji: doc.data().emoji
-            // size: querySnapshot.size
-          })
-        })
-        this.collections = collections
-      })
     }
   }
 }

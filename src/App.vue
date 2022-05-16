@@ -20,6 +20,7 @@ export default {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.$store.commit('setUser', user)
+        this.$store.dispatch('getCollections')
       }
     })
   },
