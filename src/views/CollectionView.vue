@@ -49,7 +49,7 @@
         </TransitionGroup>
       </div>
     </div>
-    <div class="mt-10" v-if="doneTodos.length">
+    <div v-if="doneTodos.length" class="mt-10">
       <p class="font-medium">Ukończone <span v-if="doneTodos">- {{ doneTodos.length }}</span></p>
       <div class="mt-5 space-y-3">
         <TransitionGroup name="list">
@@ -130,10 +130,13 @@ export default {
     },
     async getCollectionInfo () {
       const docSnap = await getDoc(doc(db, 'collections', this.$route.params.id))
-      const result = docSnap.data()
-      this.collectionEmoji = result.emoji
-      this.collectionTitle = result.title
-      this.collectionOwner = result.owner
+      if (docSnap.exists()) {
+        const result = docSnap.data()
+        this.collectionEmoji = result.emoji
+        this.collectionTitle = result.title
+        this.collectionOwner = result.owner
+        this.isFavourite = result.isFavourite
+      }
     },
     deleteCollection () {
       deleteDoc(doc(db, 'collections', this.$route.params.id))
