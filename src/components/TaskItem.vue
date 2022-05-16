@@ -7,12 +7,6 @@
         <i class="fa-solid fa-ellipsis text-lg opacity-50 hover:opacity-100 cursor-pointer transition" />
       </label>
       <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-52 text-sm dark:border-base-300 dark:border">
-        <li>
-          <a>
-            <i class="fa-regular fa-pen-to-square" />
-            Edytuj
-          </a>
-        </li>
         <li @click.prevent="removeTodo(id)">
           <a class="text-error active:bg-error active:text-error-content">
             <i class="fa-regular fa-trash-can" />
@@ -27,13 +21,26 @@
 <script>
 import { doc, deleteDoc, updateDoc } from 'firebase/firestore'
 import { db } from '@/firebase/appInit'
+
 export default {
   name: 'TaskItem',
   props: {
-    title: String,
-    id: String,
-    collectionId: String,
-    isDone: Boolean
+    title: {
+      type: String,
+      default: ''
+    },
+    id: {
+      type: String,
+      default: ''
+    },
+    collectionId: {
+      type: String,
+      default: ''
+    },
+    isDone: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     async removeTodo (id) {
