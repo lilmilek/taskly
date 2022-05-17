@@ -1,6 +1,6 @@
 <template>
   <div class="flex min-h-screen">
-    <div class="py-10 px-5 w-full flex items-center text-center lg:text-left lg:w-1/2">
+    <div class="py-10 px-5 w-full flex items-center text-center">
       <div class="max-w-md w-full mx-auto space-y-8">
         <div>
           <h1 class="text-4xl font-bold">Zarejestruj się w <span class="font-extrabold underline">Taskly</span></h1>
@@ -12,7 +12,7 @@
               <i class="fa-regular fa-user text-3xl opacity-50" />
             </div>
             <div v-if="imgUrl" class="w-24 rounded-full">
-              <img :src="imgUrl">
+              <img :src="imgUrl" alt="">
             </div>
             <div class="absolute bg-primary p-2 rounded-full bottom-0 right-0">
               <i class="fa-solid fa-plus text-white" />
@@ -35,12 +35,10 @@
         <p class="text-zinc-500 text-sm text-center">Masz już konto? <router-link :to="{name: 'login'}" class="font-medium text-primary hover:text-primary-focus transition">Zaloguj się</router-link></p>
       </div>
     </div>
-    <OnBoarding />
   </div>
 </template>
 
 <script>
-import OnBoarding from '@/components/OnBoarding'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { setDoc, doc } from 'firebase/firestore'
 import { auth, db, storage } from '@/firebase/appInit'
@@ -48,7 +46,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 export default {
   name: 'RegisterView',
-  components: { OnBoarding },
+  components: {},
   data () {
     return {
       email: '',

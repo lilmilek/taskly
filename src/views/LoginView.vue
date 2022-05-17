@@ -1,6 +1,6 @@
 <template>
   <div class="flex min-h-screen">
-    <div class="py-10 px-5 w-full flex items-center lg:w-1/2">
+    <div class="py-10 px-5 w-full flex items-center">
       <div class="max-w-md mx-auto space-y-8">
         <div>
           <h1 class="text-4xl font-bold">Zaloguj się do <span class="font-extrabold underline">Taskly</span></h1>
@@ -16,19 +16,15 @@
         <p class="text-zinc-500 text-sm text-center">Nie masz konta? <router-link :to="{name: 'register'}" class="text-primary hover:text-primary-focus transition font-medium">Zarejestruj się</router-link></p>
       </div>
     </div>
-    <OnBoarding />
   </div>
-  <TheNotifications />
 </template>
 
 <script>
-import OnBoarding from '@/components/OnBoarding'
-import TheNotifications from '@/components/TheNotifications'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/firebase/appInit'
 export default {
   name: 'LoginView',
-  components: { TheNotifications, OnBoarding },
+  components: {},
   data () {
     return {
       email: '',

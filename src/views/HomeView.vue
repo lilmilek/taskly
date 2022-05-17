@@ -1,6 +1,6 @@
 <template>
-  <div class="home">
-    <h1></h1>
+  <div class="max-w-screen-md px-5 mx-auto mt-10">
+    <h1 />
   </div>
 </template>
 

@@ -18,7 +18,7 @@
               Ulubiona
             </a>
           </li>
-          <li>
+          <li class="disabled">
             <a>
               <i class="fa-regular fa-pen-to-square" />
               Edytuj

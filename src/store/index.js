@@ -74,6 +74,12 @@ export default createStore({
     },
     setCollections (state, payload) {
       state.collections = payload
+    },
+    setUserPhotoUrl (state, payload) {
+      state.userPhotoUrl = payload
+    },
+    setUserEmail (state, payload) {
+      state.userEmail = payload
     }
   },
   actions: {
@@ -91,7 +97,7 @@ export default createStore({
         commit('setCollections', collections)
       })
     },
-    getFriendsRequest ({ commit, state }) {
+    getFriendsRequest ({ state }) {
       onSnapshot(doc(db, 'users', state.userUid), (doc) => {
         state.receiveFriendsRequests = doc.data().receiveFriendsRequests
       })
