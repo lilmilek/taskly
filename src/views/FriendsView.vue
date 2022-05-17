@@ -10,26 +10,41 @@
       </div>
     </div>
     <div class="mt-10 space-y-4">
-      <div v-for="user in searchedUsers" :key="user.id" class="flex items-center">
-        <img :src="user.photoUrl" class="aspect-square w-14 object-cover rounded-full">
-        <div class="ml-4">
-          <h3 class="font-bold">{{ user.name }}</h3>
-          <p class="text-base-content/60 text-sm">{{ user.email }}</p>
+      <p class="font-bold">Inni użytkownicy</p>
+      <template v-for="user in searchedUsers" :key="user.id">
+        <div v-if="user.id !== $store.state.userUid" class="flex justify-between items-center">
+          <div class="flex items-center">
+            <img :src="user.photoUrl" class="aspect-square w-14 object-cover rounded-full">
+            <div class="ml-4">
+              <h3 class="font-bold">{{ user.name }}</h3>
+              <p class="text-base-content/60 text-sm">{{ user.email }}</p>
+            </div>
+          </div>
+          <div>
+            <template v-if="user.receiveFriendsRequests">
+              <button v-if="user.receiveFriendsRequests.includes($store.state.userUid)" class="btn btn-xs btn-outline" @click="removeFriendRequest(user.id)">Wysłano zaproszenie</button>
+            </template>
+            <button v-if="!user.receiveFriendsRequests || !user.receiveFriendsRequests.includes($store.state.userUid)" class="btn btn-xs btn-outline" @click="sendFriendRequest(user.id)">Zaproś</button>
+          </div>
         </div>
-      </div>
+      </template>
     </div>
+    <p v-if="receiveFriendsRequests">Zaproszenia wyslane do mnie {{ receiveFriendsRequests.join(', ') }} </p>
+    <p v-if="sentFriendsRequest">Zaproszenia wyslane przeze mnie {{ sentFriendsRequest.join(', ') }} </p>
   </div>
 </template>
 
 <script>
-import { collection, query, getDocs } from 'firebase/firestore'
+import { collection, query, getDocs, doc, updateDoc, arrayUnion, onSnapshot, arrayRemove } from 'firebase/firestore'
 import { db } from '@/firebase/appInit'
 export default {
   name: 'FriendsView',
   data () {
     return {
       searchModel: '',
-      users: []
+      users: [],
+      receiveFriendsRequests: [],
+      sentFriendsRequest: []
     }
   },
   computed: {
@@ -43,6 +58,7 @@ export default {
   },
   mounted () {
     this.getUsers()
+    this.getCurrentUserRequests()
   },
   methods: {
     async getUsers () {
@@ -54,10 +70,31 @@ export default {
           id: doc.id,
           email: doc.data().email,
           name: doc.data().displayName,
-          photoUrl: doc.data().photoUrl
+          photoUrl: doc.data().photoUrl,
+          receiveFriendsRequests: doc.data().receiveFriendsRequests
         })
-        this.users = users
       })
+      this.users = users
+    },
+    getCurrentUserRequests () {
+      onSnapshot(doc(db, 'users', this.$store.state.userUid), (doc) => {
+        this.receiveFriendsRequests = doc.data().receiveFriendsRequests
+        this.sentFriendsRequest = doc.data().sentFriendsRequest
+      })
+    },
+    async sendFriendRequest (id) {
+      console.log(id)
+      await updateDoc(doc(db, 'users', id), {
+        receiveFriendsRequests: arrayUnion(this.$store.state.userUid)
+      })
+      await this.getUsers()
+    },
+    async removeFriendRequest (id) {
+      console.log(id)
+      await updateDoc(doc(db, 'users', id), {
+        receiveFriendsRequests: arrayRemove(this.$store.state.userUid)
+      })
+      await this.getUsers()
     }
   }
 }

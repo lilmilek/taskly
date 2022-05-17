@@ -7,7 +7,6 @@ import CollectionView from '@/views/CollectionView'
 import AccountView from '@/views/AccountView'
 import { auth } from '@/firebase/appInit'
 import PageNotFound from '@/views/PageNotFound'
-import FriendsView from '@/views/FriendsView'
 
 const routes = [
   {
@@ -71,15 +70,15 @@ const routes = [
       requiresAuth: false
     }
   },
-  {
-    path: '/znajomi',
-    name: 'friends',
-    component: FriendsView,
-    meta: {
-      title: 'Znajomi',
-      requiresAuth: true
-    }
-  },
+  // {
+  //   path: '/znajomi',
+  //   name: 'friends',
+  //   component: FriendsView,
+  //   meta: {
+  //     title: 'Znajomi',
+  //     requiresAuth: true
+  //   }
+  // },
   {
     path: '/:pathMatch(.*)*',
     redirect: '/404'

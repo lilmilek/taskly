@@ -21,6 +21,7 @@ export default {
       if (user) {
         this.$store.commit('setUser', user)
         this.$store.dispatch('getCollections')
+        this.$store.dispatch('getFriendsRequest')
       }
     })
   },

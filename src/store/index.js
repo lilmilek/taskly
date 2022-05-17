@@ -1,5 +1,5 @@
 import { createStore } from 'vuex'
-import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore'
+import { collection, onSnapshot, orderBy, query, where, doc } from 'firebase/firestore'
 import { db } from '@/firebase/appInit'
 
 export default createStore({
@@ -40,7 +40,8 @@ export default createStore({
       '&#129301',
       '✌', '😂', '😝', '😁', '😱', '👉', '🙌', '🍻', '🔥', '🌈', '☀', '🎈', '🌹', '💄', '🎀', '⚽', '🎾', '🏁', '😡', '👿', '🐻', '🐶', '🐬'
     ],
-    collections: []
+    collections: [],
+    receiveFriendsRequests: []
   },
   getters: {
   },
@@ -88,6 +89,11 @@ export default createStore({
           })
         })
         commit('setCollections', collections)
+      })
+    },
+    getFriendsRequest ({ commit, state }) {
+      onSnapshot(doc(db, 'users', state.userUid), (doc) => {
+        state.receiveFriendsRequests = doc.data().receiveFriendsRequests
       })
     }
   },
